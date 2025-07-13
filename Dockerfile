@@ -1,14 +1,20 @@
 FROM nikolaik/python-nodejs:python3.10-nodejs19
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Use safer FFmpeg installation
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ffmpeg curl ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
+# Set working directory
 WORKDIR /app
+
+# Copy all project files into container
 COPY . .
 
-RUN pip3 install --no-cache-dir --upgrade pip \
-    && pip3 install --no-cache-dir --upgrade -r requirements.txt
+# Install Python dependencies
+RUN pip3 install --no-cache-dir --upgrade pip && \
+    pip3 install --no-cache-dir -r requirements.txt
 
-CMD bash start
+# Start the dummy server + bot
+CMD ["bash", "start"]
